@@ -1,4 +1,3 @@
-/* Base styling */
 body,
 input,
 button {
@@ -30,7 +29,6 @@ body {
   color: #e0e0e0;
 }
 
-/* Todo grid and card styling */
 .todo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -101,7 +99,6 @@ input[type="checkbox"] {
   color: #e0e0e0;
 }
 
-/* Responsive adjustments */
 @media (max-width: 600px) {
   .todo-grid {
     grid-template-columns: 1fr;
