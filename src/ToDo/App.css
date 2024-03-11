@@ -99,6 +99,22 @@ input[type="checkbox"] {
   color: #e0e0e0;
 }
 
+.app-container .logoutButton {
+  position: absolute; /* Adjust if necessary based on your layout */
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background-color: #f44336; /* Red color for logout, adjust as needed */
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.app-container .logoutButton:hover {
+  background-color: #d32f2f; /* Darker shade on hover */
+}
+
 @media (max-width: 600px) {
   .todo-grid {
     grid-template-columns: 1fr;
