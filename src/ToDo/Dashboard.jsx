@@ -2,17 +2,30 @@ import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-import "./App.css"; // Make sure this is the correct path to your CSS file
+import "./App.css";
 import { db, auth } from "../firebase";
 import { collection, addDoc, updateDoc, deleteDoc, onSnapshot, doc, query, orderBy, serverTimestamp } from "firebase/firestore";
-import { getAuth, signOut } from "firebase/auth";
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 
 function App() {
   const [todos, setTodos] = useState([]);
   const [newItem, setItem] = useState("");
-  const [editingId, setEditingId] = useState(null); // State to track editing
-  const [editText, setEditText] = useState(""); // State to hold edit text
+  const [editingId, setEditingId] = useState(null);
+  const [editText, setEditText] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+  const [displayName, setDisplayName] = useState("");
+
+  useEffect(() => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setDisplayName(user.displayName || "User");
+      } else {
+        navigate("/login");
+      }
+    });
+  }, [navigate]);
 
   useEffect(() => {
     const q = query(collection(db, "todos"), orderBy("timestamp", "desc"));
@@ -29,7 +42,6 @@ function App() {
   async function handleAddOrUpdateTodo(e) {
     e.preventDefault();
     if (editingId) {
-      // Update the todo
       await updateDoc(doc(db, "todos", editingId), {
         title: editText,
         timestamp: serverTimestamp(),
@@ -37,7 +49,6 @@ function App() {
       setEditingId(null);
       setEditText("");
     } else {
-      // Add a new todo
       if (!newItem.trim()) return;
       await addDoc(collection(db, "todos"), {
         title: newItem,
@@ -69,13 +80,22 @@ function App() {
     setSearchQuery(e.target.value);
   };
 
+  const handleEditProfile = () => {
+    navigate("/profile");
+  };
+
   const filteredTodos = todos.filter((todo) => todo.title.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <div className="app-container">
+      <button onClick={handleEditProfile} className="btn">
+        Edit Profile
+      </button>
+
       <header className="header">
         <h1>ToDo List</h1>
         <input type="text" className="search-input" placeholder="Search todos..." value={searchQuery} onChange={handleSearchChange} />
+        <div className="user-info">Welcome, {displayName}</div>
       </header>
       <div className="actions">
         <form className="new-item-form" onSubmit={handleAddOrUpdateTodo}>
